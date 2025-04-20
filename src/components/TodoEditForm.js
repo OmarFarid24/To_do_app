@@ -1,7 +1,13 @@
+import { observer } from 'mobx-react';
 import { Box, IconButton, Paper, Typography, TextField, Collapse } from '@mui/material';
 import { Save as SaveIcon, Close as CloseIcon } from '@mui/icons-material';
 
-const TodoEditForm = ({ isEditing, value, onChange, onSave, onCancel 
+const TodoEditForm = observer(({ 
+  isEditing, 
+  value, 
+  onChange, 
+  onSave, 
+  onCancel 
 }) => (
   <Collapse in={isEditing}>
     <Paper elevation={3} sx={{ p: 2, mb: 2, bgcolor: 'action.selected' }}>
@@ -34,6 +40,6 @@ const TodoEditForm = ({ isEditing, value, onChange, onSave, onCancel
       </Box>
     </Paper>
   </Collapse>
-);
+));
 
 export default TodoEditForm;

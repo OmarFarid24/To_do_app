@@ -1,6 +1,7 @@
+import { observer } from 'mobx-react';
 import { Button, ButtonGroup, Paper } from '@mui/material';
 
-const TodoFilters = ({ filter, setFilter }) => (
+const TodoFilters = observer(({ filter, setFilter }) => (
   <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
     <ButtonGroup fullWidth>
       <Button 
@@ -32,6 +33,6 @@ const TodoFilters = ({ filter, setFilter }) => (
       </Button>
     </ButtonGroup>
   </Paper>
-);
+));
 
 export default TodoFilters;

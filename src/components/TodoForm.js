@@ -1,6 +1,7 @@
+import { observer } from 'mobx-react';
 import { Box, Button, TextField, Paper } from '@mui/material';
 
-const TodoForm = ({ value, onChange, onSubmit }) => (
+const TodoForm = observer(({ value, onChange, onSubmit }) => (
   <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
     <Box sx={{ display: 'flex' }}>
       <TextField
@@ -21,6 +22,6 @@ const TodoForm = ({ value, onChange, onSubmit }) => (
       </Button>
     </Box>
   </Paper>
-);
+));
 
 export default TodoForm;

@@ -1,7 +1,8 @@
+import { observer } from 'mobx-react';
 import { Box, Checkbox } from '@mui/material';
 import { CheckCircle as CheckCircleIcon } from '@mui/icons-material';
 
-const TodoCheckbox = ({ checked, onChange }) => (
+const TodoCheckbox = observer(({ checked, onChange }) => (
   <Checkbox
     edge="start"
     checked={checked}
@@ -31,6 +32,6 @@ const TodoCheckbox = ({ checked, onChange }) => (
       '&:hover': { backgroundColor: 'transparent' }
     }}
   />
-);
+));
 
 export default TodoCheckbox;
