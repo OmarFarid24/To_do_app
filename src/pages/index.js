@@ -1,87 +1,18 @@
-import { useState, useEffect } from 'react';
+import { observer } from 'mobx-react';
 import { Container, Typography, Paper } from '@mui/material';
-import { v4 as uuidv4 } from 'uuid';
-import { useLocalStorage } from '@/pages/useLocalStorage';
 import TodoFilters from '@/components/TodoFilters';
 import TodoForm from '@/components/TodoForm';
 import TodoEditForm from '@/components/TodoEditForm';
 import TodoList from '@/components/TodoList';
+import todoStore from '@/stores/TodoStore';
 
-const TodoApp = () => {
-  const [todos, setTodos] = useLocalStorage('todos', []);
-  const [inputValue, setInputValue] = useState('');
-  const [editInputValue, setEditInputValue] = useState('');
-  const [editId, setEditId] = useState(null);
-  const [filter, setFilter] = useState('all');
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  const addTodo = () => {
-    if (inputValue.trim() === '') return;
-    
-    const newTodo = {
-      id: uuidv4(),
-      text: inputValue,
-      completed: false,
-      date: new Date().toISOString().split('T')[0]
-    };
-    setTodos([...todos, newTodo]);
-    setInputValue('');
-  };
-
-  const deleteTodo = (id) => {
-    setTodos(todos.filter(todo => todo.id !== id));
-  };
-
-  const toggleTodo = (id) => {
-    setTodos(todos.map(todo => 
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
-  };
-
-  const startEdit = (id) => {
-    const todoToEdit = todos.find(todo => todo.id === id);
-    setEditInputValue(todoToEdit.text);
-    setEditId(id);
-  };
-
-  const saveEdit = () => {
-    if (editInputValue.trim() === '') return;
-    
-    setTodos(todos.map(todo => 
-      todo.id === editId ? { ...todo, text: editInputValue } : todo
-    ));
-    setEditId(null);
-    setEditInputValue('');
-  };
-
-  const cancelEdit = () => {
-    setEditId(null);
-    setEditInputValue('');
-  };
-
-  const filteredTodos = todos.filter(todo => {
-    if (filter === 'completed') return todo.completed;
-    if (filter === 'pending') return !todo.completed;
-    if (filter === 'today') return todo.date === new Date().toISOString().split('T')[0];
+const TodoApp = observer(() => {
+  const filteredTodos = todoStore.todos.filter(todo => {
+    if (todoStore.filter === 'completed') return todo.completed;
+    if (todoStore.filter === 'pending') return !todo.completed;
+    if (todoStore.filter === 'today') return todo.date === new Date().toISOString().split('T')[0];
     return true;
   });
-
-  if (!isClient) {
-    return (
-      <Container maxWidth="sm" sx={{ mt: 4 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          To-Do App
-        </Typography>
-        <Typography align="center" sx={{ p: 4 }}>
-          Cargando aplicación...
-        </Typography>
-      </Container>
-    );
-  }
 
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
@@ -89,34 +20,37 @@ const TodoApp = () => {
         To-Do App
       </Typography>
       
-      <TodoFilters filter={filter} setFilter={setFilter} />
+      <TodoFilters 
+        filter={todoStore.filter} 
+        setFilter={todoStore.setFilter} 
+      />
       
       <TodoForm 
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onSubmit={addTodo}
+        value={todoStore.inputValue}
+        onChange={(e) => (todoStore.inputValue = e.target.value)}
+        onSubmit={todoStore.addTodo}
       />
       
       <TodoEditForm
-        isEditing={editId !== null}
-        value={editInputValue}
-        onChange={(e) => setEditInputValue(e.target.value)}
-        onSave={saveEdit}
-        onCancel={cancelEdit}
+        isEditing={todoStore.editId !== null}
+        value={todoStore.editInputValue}
+        onChange={(e) => (todoStore.editInputValue = e.target.value)}
+        onSave={todoStore.saveEdit}
+        onCancel={todoStore.cancelEdit}
       />
       
       <Paper elevation={3}>
         <TodoList
           todos={filteredTodos}
-          filter={filter}
-          onToggle={toggleTodo}
-          onEdit={startEdit}
-          onDelete={deleteTodo}
-          editId={editId}
+          filter={todoStore.filter}
+          onToggle={todoStore.toggleTodo}
+          onEdit={todoStore.startEdit}
+          onDelete={todoStore.deleteTodo}
+          editId={todoStore.editId}
         />
       </Paper>
     </Container>
   );
-};
+});
 
 export default TodoApp;
